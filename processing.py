@@ -1,120 +1,95 @@
-'''
-In summary, the experimental runs were:
 
-Baseline, eyes open
-Baseline, eyes closed
-Task 1 (open and close left or right fist)
-Task 2 (imagine opening and closing left or right fist)
-Task 3 (open and close both fists or both feet)
-Task 4 (imagine opening and closing both fists or both feet)
-Task 1
-Task 2
-Task 3
-Task 4
-Task 1
-Task 2
-Task 3
-Task 4
-The data are provided here in EDF+ format (containing 64 EEG signals, each sampled at 160 samples per second, and an annotation channel). For use with PhysioToolkit software, rdedfann generated a separate PhysioBank-compatible annotation file (with the suffix .event) for each recording. The .event files and the annotation channels in the corresponding .edf files contain identical data.
-
-Each annotation includes one of three codes (T0, T1, or T2):
-
-T0 corresponds to rest
-T1 corresponds to onset of motion (real or imagined) of
-the left fist (in runs 3, 4, 7, 8, 11, and 12)
-both fists (in runs 5, 6, 9, 10, 13, and 14)
-T2 corresponds to onset of motion (real or imagined) of
-the right fist (in runs 3, 4, 7, 8, 11, and 12)
-both feet (in runs 5, 6, 9, 10, 13, and 14)
-'''
-
-
+#64 x 113
 import mne
+import pandas as pd
 import matplotlib.pyplot as plt
-%matplotlib qt
-
-fname = 'Data/S001R03.edf'
-fevent = 'Data/S001R03.edf.event'
-
-raw = mne.io.read_raw_edf(fname,preload=True)
+import numpy as np
 
 
-xRaw = raw.get_data()
-
-raw.plot_psd()
+#%matplotlib qt
 
 
-raw.plot()
+USER_LIST = 'Res/Users.npy'
+DB_PATH = 'Res/dataset.npy'
 
 
-raw.filter(None, 50., h_trans_bandwidth='auto', filter_length='auto',
+def Input(fname):
+    raw = mne.io.read_raw_edf(fname,preload=True)
+    return raw
+    
+    
+
+def SetMontage(raw):
+    raw.filter(None, 50., h_trans_bandwidth='auto', filter_length='auto',
            phase='zero')
+    for x in raw.ch_names:
+        str = x.replace(".", "")
+        raw.rename_channels(mapping={x:str})
+    raw.filter(1, 40, n_jobs=2) 
+    picks_meg = mne.pick_types(raw.info, meg=False, eeg=True, eog=False,
+                               stim=False, exclude='bads')
+    montage =  mne.channels.make_standard_montage('standard_1005')
+    raw.set_montage(montage,match_case=False)
 
-print(raw.ch_names)
-#print(raw.info)
-print(raw.info['chs'][0]['loc'])
-for x in raw.ch_names:
-    str = x.replace(".", "")
-    #print(str)
-    raw.rename_channels(mapping={x:str})
-print (raw.ch_names)
-print(raw.info['chs'][0]['loc'])
+    
 
+def ApplyICA(raw):
+    ica = mne.preprocessing.ICA(n_components=20,random_state=0)
+    ica.fit(raw.copy().filter(8,40))    
+    #ica.plot_components(outlines = 'skirt')    
+    #raw.plot()    
+    raw_corrected = raw.copy()    
+    ica.apply(raw_corrected)
+    #ica.apply(raw_corrected).plot();
+    return raw_corrected,ica
+    
 
-
-channels = raw.ch_names
-
-raw.filter(1, 40, n_jobs=2)  # 1Hz high pass is often helpful for fitting ICA
-
-
-picks_meg = mne.pick_types(raw.info, meg=False, eeg=True, eog=False,
-                           stim=False, exclude='bads')
-
-
-montage =  mne.channels.make_standard_montage('standard_1005')
-raw.set_montage(montage,match_case=False)
-
-
-ica = mne.preprocessing.ICA(n_components=20,random_state=0)
-
-
-ica.fit(raw.copy().filter(8,40))
-
-ica.plot_components(outlines = 'skirt')
-
-raw.plot()
-
-raw_corrected = raw.copy()
-
-ica.apply(raw_corrected).plot();
+def GetEpochs(raw,ica):
+    dictionary = {"T2" : 100}
+    eves = mne.events_from_annotations(raw,dictionary)
+    events = eves[0] 
+    events_ids = {"target/stimulus":100}
+    epochs = mne.Epochs(raw,events,event_id=events_ids,preload=True)
+    #epochs.plot()
+    epochs = ica.apply(epochs)
+    epochs.apply_baseline((None,0))
+    #epochs.save("S01E01.fif")
+    return epochs
 
 
-#EPOCH EXTRACTION
+def ModifyDatabase(epochs,label):
+    from scipy.stats import trim_mean  
+    trim = lambda x: trim_mean(x, 0.1, axis=0)  
+    epoch_avg = epochs.average(method=trim) 
+    #epoch_avg.plot()
+    #epochs.plot_psd()
+    #epochs.plot()
+    epoch_av_data = epoch_avg.data
+    X = epoch_av_data
+    y = label
+    db = np.load(DB_PATH,allow_pickle='TRUE')
+    flatX = X.flatten()
+    flatX = np.append(flatX,y)
+    db = np.append(db,[flatX],axis=0)
+    np.save(DB_PATH,db) 
+    #db.close()
+    
+    
 
-dictionary = {
-            "T2" : 100
-        }
-
-eves = mne.events_from_annotations(raw_corrected,dictionary)
-
-events = eves[0] 
-
-events_ids = {"target/stimulus":100}
-
-epochs = mne.Epochs(raw_corrected,events,event_id=events_ids,preload=True)
-
-epochs.plot()
-
-
-epochs = ica.apply(epochs)
+    
 
 
 
-epochs.apply_baseline((None,0))
- 
-
-#events = mne.find_events(raw_corrected,channels)
 
 
-epochs.save("S01E01.fif")
+
+
+
+
+
+
+
+
+
+
 
