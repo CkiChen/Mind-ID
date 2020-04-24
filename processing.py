@@ -26,46 +26,28 @@ def SetMontage(raw):
         str = x.replace(".", "")
         raw.rename_channels(mapping={x:str})
     raw.filter(1, 40, n_jobs=2) 
-    picks_meg = mne.pick_types(raw.info, meg=False, eeg=True, eog=False,
-                               stim=False, exclude='bads')
     montage =  mne.channels.make_standard_montage('standard_1005')
     raw.set_montage(montage,match_case=False)
 
     
 
-def ApplyICA(raw):
-    ica = mne.preprocessing.ICA(n_components=20,random_state=0)
-    ica.fit(raw.copy().filter(8,40))    
-    #ica.plot_components(outlines = 'skirt')    
-    #raw.plot()    
-    raw_corrected = raw.copy()    
-    ica.apply(raw_corrected)
-    #ica.apply(raw_corrected).plot();
-    return raw_corrected,ica
-    
-
-def GetEpochs(raw,ica):
+def ApplyPCA(raw,n): 
     dictionary = {"T2" : 100}
     eves = mne.events_from_annotations(raw,dictionary)
     events = eves[0] 
     events_ids = {"target/stimulus":100}
     epochs = mne.Epochs(raw,events,event_id=events_ids,preload=True)
-    #epochs.plot()
-    epochs = ica.apply(epochs)
-    epochs.apply_baseline((None,0))
-    #epochs.save("S01E01.fif")
-    return epochs
+    from mne.decoding import UnsupervisedSpatialFilter
+    from sklearn.decomposition import PCA
+    X = epochs.get_data()
+    pca = UnsupervisedSpatialFilter(PCA(n), average=False)
+    pca_data = pca.fit_transform(X)
+    epoch_avg = np.mean(pca_data, axis=0)    
+    return pca_data,epoch_avg
 
 
 def ModifyDatabase(epochs,label):
-    from scipy.stats import trim_mean  
-    trim = lambda x: trim_mean(x, 0.1, axis=0)  
-    epoch_avg = epochs.average(method=trim) 
-    #epoch_avg.plot()
-    #epochs.plot_psd()
-    #epochs.plot()
-    epoch_av_data = epoch_avg.data
-    X = epoch_av_data
+    X = epochs
     y = label
     db = np.load(DB_PATH,allow_pickle='TRUE')
     flatX = X.flatten()

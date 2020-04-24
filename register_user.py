@@ -1,7 +1,7 @@
 
 import processing as proc
 import numpy as np
-
+import pickle as pkl
 
 #args 1 -> username , args2 -> array file adresses,args3 -> email
 def registerUser(username,filesArray,mail): 
@@ -19,25 +19,28 @@ def registerUser(username,filesArray,mail):
     for fname in filesArray:
         raw = proc.Input(fname)
         proc.SetMontage(raw)
-        new_raw,ica = proc.ApplyICA(raw)
-        epochs = proc.GetEpochs(new_raw,ica)
+        epochs,avg_epoch = proc.ApplyPCA(raw,15)
         if label == -1:
             pass
         else:
-            proc.ModifyDatabase(epochs,label)
+            proc.ModifyDatabase(avg_epoch,label)
     
     
     
- 
-
+    
+    
+    
+    
+'''
 files = ['Data/S1/S001R03.edf','Data/S1/S001R04.edf','Data/S1/S001R07.edf','Data/S1/S001R08.edf',
-         'Data/S1/S001R11.edf']    
+         'Data/S1/S001R11.edf','Data/S1/S001R12.edf']    
 
 
 registerUser('John',files,'john@gmail.com')
 
+
 files = ['Data/S2/S002R03.edf','Data/S2/S002R04.edf','Data/S2/S002R07.edf','Data/S2/S002R08.edf',
-         'Data/S2/S002R11.edf']    
+         'Data/S2/S002R11.edf','Data/S2/S002R12.edf']    
 
 
 registerUser('Amy',files,'amy@gmail.com')
@@ -46,7 +49,7 @@ registerUser('Amy',files,'amy@gmail.com')
 
 
 files = ['Data/S3/S003R03.edf','Data/S3/S003R04.edf','Data/S3/S003R07.edf','Data/S3/S003R08.edf',
-         'Data/S3/S003R11.edf']    
+         'Data/S3/S003R11.edf','Data/S3/S003R12.edf']    
 
 
 
@@ -55,7 +58,17 @@ registerUser('Chris',files,'amit@ymail.com')
 
 
 files = ['Data/S4/S004R03.edf','Data/S4/S004R04.edf','Data/S4/S004R07.edf','Data/S4/S004R08.edf',
-         'Data/S4/S004R11.edf']    
+         'Data/S4/S004R11.edf','Data/S4/S004R12.edf']    
 
 
 registerUser('Monica',files,'monica@ymail.com')
+
+
+
+files = ['Data/S5/S005R03.edf','Data/S5/S005R04.edf','Data/S5/S005R07.edf','Data/S5/S005R08.edf',
+         'Data/S5/S005R11.edf','Data/S5/S005R12.edf']    
+
+
+registerUser('Adam',files,'adam@ymail.com')
+
+'''
