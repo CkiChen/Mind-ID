@@ -1,12 +1,19 @@
 import sys
+import os
 import re
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.uic import loadUi
 
-class trial_code(QtWidgets.QMainWindow):
+class mind_id(QtWidgets.QMainWindow):
     def __init__(self):
-        super(trial_code,self).__init__()
-        loadUi('login_window.ui', self)
+        super(mind_id,self).__init__()
+        self.dirname = os.path.dirname(__file__)
+        filename = os.path.join(self.dirname, 'login_window.ui')
+        # print (dirname)
+        loadUi(filename, self)
+
+        filename = os.path.join(self.dirname, 'background.png')
+        self.label_2.setPixmap(QtGui.QPixmap(filename))
 
         #######################
         #### MY CODE STARTS HERE
@@ -160,11 +167,3 @@ class trial_code(QtWidgets.QMainWindow):
         
         #### MY CODE STARTS HERE
         #######################
-
-
-
-if __name__ == "__main__":
-    app = QtWidgets.QApplication(sys.argv)
-    window = trial_code()
-    window.show()
-    sys.exit(app.exec_())
