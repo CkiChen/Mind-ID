@@ -68,7 +68,7 @@
        <string/>
       </property>
       <property name="pixmap">
-       <pixmap>../../New folder/GUI/success_window_background_1.jpg</pixmap>
+       <pixmap>success_window_background_1.jpg</pixmap>
       </property>
       <property name="scaledContents">
        <bool>true</bool>
@@ -204,7 +204,7 @@
        <string/>
       </property>
       <property name="pixmap">
-       <pixmap>../../New folder/GUI/success_window_background_1.jpg</pixmap>
+       <pixmap>success_window_background_1.jpg</pixmap>
       </property>
       <property name="scaledContents">
        <bool>true</bool>

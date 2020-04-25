@@ -14,6 +14,7 @@ class login_successful(QtWidgets.QMainWindow):
 
         filename = os.path.join(self.dirname, 'success_window_background_1.jpg')
         self.background.setPixmap(QtGui.QPixmap(filename))
+        self.background_2.setPixmap(QtGui.QPixmap(filename))
 
         ####################
         
@@ -30,16 +31,18 @@ class login_successful(QtWidgets.QMainWindow):
         dirname = os.path.dirname(__file__)
         user = '../BackEnd/Res/Plots/' + str(self.user_name)
         path = os.path.join(dirname, user)
-        self.names = ['Montage','epochs psd','power spectral density','raw epochs','raw data']
+        self.names = ['Montage','raw data','raw epochs','power spectral density','epochs psd']
         filename1 = os.path.join(path, 'Montage.png')
-        filename2 = os.path.join(path, 'epochs_psd.png')
-        filename3 = os.path.join(path, 'power_spectral_density.png')
-        filename4 = os.path.join(path, 'raw_epochs.png')
-        filename5 = os.path.join(path, 'raw-data.png')
+        filename2 = os.path.join(path, 'raw-data.png')
+        filename3 = os.path.join(path, 'raw_epochs.png')
+        filename4 = os.path.join(path, 'power_spectral_density.png')
+        filename5 = os.path.join(path, 'epochs_psd.png')
         self.images = [filename1, filename2, filename3, filename4, filename5]
     
     def open_folder_clicked(self):
-        path = "D:\Bakchodi\Mind ID\Mind-ID\BackEnd\Res\Plots\\" + str(self.user_name)
+        dirname = os.path.dirname(__file__)
+        path = os.path.join(dirname, '../BackEnd/Res/Plots/')
+        path = path + str(self.user_name)
         os.startfile(path)
 
     def visualize_b_clicked(self):
