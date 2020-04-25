@@ -1,12 +1,11 @@
 
 import mne
 import pandas as pd
+import matplotlib
 import matplotlib.pyplot as plt
+matplotlib.use('Agg')
 import numpy as np
 import os
-
-
-
 
 
 #%matplotlib qt

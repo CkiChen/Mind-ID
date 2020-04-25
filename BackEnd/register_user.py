@@ -33,6 +33,7 @@ def registerUser(username,filesArray):
             proc.createDir(username)
     
         for fname in filesArray:
+            print("yahan aaya atleast")
             raw = proc.Input(fname)
             proc.SetMontage(raw)
             epochs,avg_epoch = proc.ApplyPCA(raw,15)
@@ -52,11 +53,11 @@ def registerUser(username,filesArray):
     
  
 
-files = ['Data/S1/S001R03.edf','Data/S1/S001R04.edf','Data/S1/S001R07.edf','Data/S1/S001R08.edf',
-         'Data/S1/S001R11.edf','Data/S1/S001R12.edf']    
+# files = ['Data/S1/S001R03.edf','Data/S1/S001R04.edf','Data/S1/S001R07.edf','Data/S1/S001R08.edf',
+#          'Data/S1/S001R11.edf','Data/S1/S001R12.edf']    
 
 
-registerUser('John',files)
+# registerUser('John',files)
 
 
 '''

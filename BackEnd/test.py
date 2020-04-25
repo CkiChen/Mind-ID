@@ -10,11 +10,11 @@ import numpy as np
 
 db = np.load('Res/dataset.npy',allow_pickle='TRUE')
 
-
+print(db)
 
 x = np.load('Res/Users.npy',allow_pickle='TRUE').item()
 
-
+print(x)
 
 
    

@@ -22,9 +22,6 @@ def SetPathsVars():
     
 
 
-
-
-
 def getPath(s):
     dirname = os.path.dirname(__file__)                  ### This defines dirctory path
     path = os.path.join(dirname,s)                       ### this puts absolute path in filename
@@ -32,8 +29,11 @@ def getPath(s):
 
 
 def UpdateModel():
-    try :  
-        SetPathsVars() 
+    try :
+        SetPathsVars()
+        userlist = np.load(USER_LIST,allow_pickle='TRUE').item()
+        if(len(userlist) < 2):
+            return True 
         database = np.load(DB_PATH,allow_pickle='TRUE')
         print(database)
         database = database[1:]
