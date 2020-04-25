@@ -5,7 +5,7 @@ import pickle as pkl
 
 
 #args 1 -> username , args2 -> array file adresses,args3 -> email
-def registerUser(username,filesArray,mail): 
+def registerUser(username,filesArray): 
     
     try:
         userlist = np.load(proc.USER_LIST,allow_pickle='TRUE').item()

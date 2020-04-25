@@ -5,8 +5,17 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.uic import loadUi
 import success_window_gui as success_gui
 
+dir_name = os.path.dirname(__file__)
+file_name = os.path.join(dir_name, '../BackEnd/')
+sys.path.append(file_name)
+
+import register_user
+import SVM_Model
+import initialise
+
 class mind_id(QtWidgets.QMainWindow):
     def __init__(self):
+        initialise.init()
         super(mind_id,self).__init__()
         self.dirname = os.path.dirname(__file__)
         filename = os.path.join(self.dirname, 'login_window.ui')
@@ -154,7 +163,7 @@ class mind_id(QtWidgets.QMainWindow):
                 if(self.check_file_format(self.file_path)):
                     self.in_progress("Login in Progress...")
                     # call predict function
-                    predict = True
+                    predict = SVM_Model.MakePrediction(self.user_name, self.file_path)
                     if (predict):
                         self.login_successful()
                     else:
@@ -171,7 +180,8 @@ class mind_id(QtWidgets.QMainWindow):
                         assert(self.check_file_format(file_name))
                     self.in_progress("Signup in progress...")
                     ## call register function
-                    register = True
+                    register = register_user.registerUser(self.user_name,self.file_path)
+                    temp = SVM_Model.UpdateModel()
                     if(register):
                         self.signup_result("successful!")
                     else:
