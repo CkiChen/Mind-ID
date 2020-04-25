@@ -1,0 +1,2 @@
+Contains resources used and produced during execution.
+Namely - model,plots,database,userlist
