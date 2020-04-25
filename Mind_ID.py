@@ -7,7 +7,8 @@ from gui import *
 from PyQt5.QtWidgets import QApplication
 
 if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    window = mind_id()
-    window.show()
-    sys.exit(app.exec_())
+	app = QApplication(sys.argv)
+	window = mind_id()
+	window.show()
+	sys.exit(app.exec_())
+

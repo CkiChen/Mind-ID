@@ -2,13 +2,25 @@
 import processing as proc
 import numpy as np
 import pickle as pkl
+import os
 
 
-#args 1 -> username , args2 -> array file adresses,args3 -> email
-def registerUser(username,filesArray): 
+def SetPathsVars():
+    global USER_LIST
+    global DB_PATH
+    global USER_PLOT_PATH 
+    dirname = os.path.dirname(__file__)                  ### This defines dirctory path
+    USER_LIST = os.path.join(dirname, 'Res/Users.npy')   ### this puts absolute path in filename
+    DB_PATH = os.path.join(dirname, 'Res/dataset.npy')    
+    USER_PLOT_PATH = os.path.join(dirname,'Res/Plots')
     
+
+#args 1 -> username , args2 -> array file adresses
+def registerUser(username,filesArray): 
+    print("executing registerUser")
+    SetPathsVars()
     try:
-        userlist = np.load(proc.USER_LIST,allow_pickle='TRUE').item()
+        userlist = np.load(USER_LIST,allow_pickle='TRUE').item()
         label = -1
         if username in userlist:
             print("Username already taken!")
@@ -17,7 +29,7 @@ def registerUser(username,filesArray):
             cnt = len(userlist)
             label = cnt+1
             userlist.update({username:(cnt+1)})
-            np.save(proc.USER_LIST,userlist) 
+            np.save(USER_LIST,userlist) 
             proc.createDir(username)
     
         for fname in filesArray:
@@ -25,26 +37,29 @@ def registerUser(username,filesArray):
             proc.SetMontage(raw)
             epochs,avg_epoch = proc.ApplyPCA(raw,15)
             if label == -1:
-                pass
+                print("Label is ",label)
             else:
                 proc.ModifyDatabase(avg_epoch,label)
-        
+        print("RegisterUser succesfully completed")        
         return True
-    except:
+    except Exception as e:
+        print(e)
+        print("From registerUser function")
         return False
     
     
  
     
  
-'''   
+
 files = ['Data/S1/S001R03.edf','Data/S1/S001R04.edf','Data/S1/S001R07.edf','Data/S1/S001R08.edf',
          'Data/S1/S001R11.edf','Data/S1/S001R12.edf']    
 
 
-registerUser('John',files,'john@gmail.com')
+registerUser('John',files)
 
-    
+
+'''
 
 files = ['Data/S2/S002R03.edf','Data/S2/S002R04.edf','Data/S2/S002R07.edf','Data/S2/S002R08.edf',
          'Data/S2/S002R11.edf','Data/S2/S002R12.edf']    

@@ -2,6 +2,7 @@ import numpy as np
 import os
 
 def init():
+    print("executing init")
     dirname = os.path.dirname(__file__)     ### This defines dirctory path
     try:
         filename = os.path.join(dirname, 'Res/Users.npy')   ### this puts absolute path in filename
@@ -21,3 +22,5 @@ def init():
 
        
 # init()
+
+
