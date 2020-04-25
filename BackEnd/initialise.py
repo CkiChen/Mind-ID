@@ -6,9 +6,9 @@ def init():
         f = open('Res/Users.npy')
         print("Already exists!")
         f.close()
-    except IOError:
+    except:
         print("creating...")
-        Users={};
+        Users={}
         np.save('Res/Users.npy', Users) 
         ch = 15
         temp = np.zeros(ch*113+1)
@@ -16,4 +16,4 @@ def init():
         np.save('Res/dataset.npy',dataset)                
 
        
-init()
+# init()
